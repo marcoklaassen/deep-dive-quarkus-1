@@ -1,15 +1,12 @@
 package click.klaassen.feedback;
 
-import java.util.Random;
+import io.quarkus.hibernate.orm.panache.PanacheEntity;
 
-public class Feedback {
-    public Integer id;
+import javax.persistence.Entity;
+
+@Entity
+public class Feedback extends PanacheEntity {
     public Integer rating;
     public String comment;
 
-    public Feedback(Integer rating, String comment) {
-        this.id = new Random().nextInt();
-        this.rating = rating;
-        this.comment = comment;
-    }
 }

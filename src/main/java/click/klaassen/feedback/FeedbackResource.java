@@ -1,36 +1,33 @@
 package click.klaassen.feedback;
 
+import javax.inject.Inject;
+import javax.transaction.Transactional;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.Set;
+import java.util.List;
 
 @Path("/feedback")
 public class FeedbackResource {
-    private Set<Feedback> feedback = Collections.newSetFromMap(Collections.synchronizedMap(new LinkedHashMap<>()));
-
-    public FeedbackResource() {
-        feedback.add(new Feedback(10, "great session"));
-        feedback.add(new Feedback(1, "buuuuuh"));
-    }
+    @Inject
+    FeedbackRepository feedbackRepository;
 
     @GET
-    public Set<Feedback> list() {
-        return feedback;
+    public List<Feedback> list() {
+        return feedbackRepository.listAll();
     }
 
     @POST
-    public Set<Feedback> add(Feedback feedback) {
-        this.feedback.add(new Feedback(feedback.rating, feedback.comment));
-        return this.feedback;
+    @Transactional
+    public List<Feedback> add(Feedback feedback) {
+        feedbackRepository.persist(feedback);
+        return feedbackRepository.listAll();
     }
 
     @DELETE
-    public Set<Feedback> delete(Feedback feedback) {
-        this.feedback.removeIf(existingFeedback -> existingFeedback.id.equals(feedback.id));
-        return this.feedback;
+    public List<Feedback> delete(Feedback feedback) {
+        feedbackRepository.delete(feedback);
+        return feedbackRepository.listAll();
     }
 }
